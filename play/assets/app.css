@@ -1,0 +1,280 @@
+/* 手写数字实验台：两课共用一个页面。第一课的样式都写在 .lesson-rec 下，第二课在 .lesson-shadow 下（第二课的元素 id 带 m- 前缀），
+   同名的类（.pad-box、.tasks、.tiles……）互不影响。公共部分在 base.css。 */
+:root { --clf: #2a78d6; --ae: #e0662f; --c0: #2a78d6; --c1: #eb6834; --c2: #1baf7a; --c3: #eda100; --c4: #e87ba4; --c5: #008300; --c6: #6250d6; --c7: #e34948; --c8: #8c6b3f; --c9: #5f6b7a; }
+@media (prefers-color-scheme: dark) { :root { --clf: #3987e5; --ae: #e0662f; --c0: #3987e5; --c1: #d95926; --c2: #199e70; --c3: #c98500; --c4: #d55181; --c5: #2f9a2f; --c6: #9085e9; --c7: #e66767; --c8: #a5825a; --c9: #8e99a6; } }
+.lesson-shadow { --accent: #d9622b; --accent-deep: #8a3510; --accent-soft: #fbe9df; }
+@media (prefers-color-scheme: dark) { .lesson-shadow { --accent: #ec7a45; --accent-deep: #f7b993; --accent-soft: #3a2418; } }
+
+/* 只显示当前这一课 */
+body[data-lesson="rec"] .lesson-shadow, body[data-lesson="shadow"] .lesson-rec { display: none !important; }
+
+/* ===== 第一课 ===== */
+.lesson-rec .stage {display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px; align-items: start; }
+.lesson-rec .pad-col {display: flex; flex-direction: column; gap: 10px; }
+.lesson-rec .pad-box {position: relative; width: min(400px, calc(100vh - 320px), 52vw); min-width: 220px; aspect-ratio: 1; border-radius: 10px;
+  border: 1px solid var(--line-strong); background-color: var(--surface); --pad-ink: var(--ink);
+  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: calc(100% / 28) calc(100% / 28); overflow: hidden; touch-action: none; }
+.lesson-rec .pad-box canvas {position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: crosshair; }
+.lesson-rec .pad-hint {position: absolute; left: 0; right: 0; bottom: 12px; text-align: center; font-size: 14px; color: var(--muted); pointer-events: none; }
+.lesson-rec .demo-badge {position: absolute; left: 8px; top: 8px; background: var(--ink); color: var(--surface); font-size: 12px; padding: 2px 8px; border-radius: 99px; pointer-events: none; }
+.lesson-rec .pad-btns {display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.lesson-rec .demo-ctl {display: none; gap: 8px; }
+body[data-mode="demo"] .lesson-rec .demo-ctl {display: inline-flex; }
+.lesson-rec .see-brain {display: none; }
+.lesson-rec .side {display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.lesson-rec .seen {display: flex; flex-direction: column; gap: 4px; }
+.lesson-rec .seen canvas {width: 112px; height: 112px; border: 1px solid var(--line-strong); border-radius: 6px; }
+.lesson-rec .verdict {display: flex; flex-direction: column; gap: 4px; }
+.lesson-rec .pred {display: flex; align-items: baseline; gap: 10px; }
+.lesson-rec .pred-digit {font-size: 56px; font-weight: 700; line-height: 1; }
+.lesson-rec .pred-conf {font-size: 15px; color: var(--ink-2); }
+.lesson-rec .mini-probs {display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 3px; max-width: 260px; align-items: end; }
+.lesson-rec .mini-probs div {display: flex; flex-direction: column; align-items: center; gap: 2px; font-family: var(--f-mono); font-size: 11px; color: var(--muted); }
+.lesson-rec .mini-probs i {display: block; width: 100%; height: 34px; background: var(--sunken); border-radius: 3px; position: relative; overflow: hidden; }
+.lesson-rec .mini-probs i b {position: absolute; left: 0; right: 0; bottom: 0; background: var(--line-strong); }
+.lesson-rec .mini-probs .hi i b {background: var(--accent); }
+.lesson-rec .mini-probs .hi {color: var(--ink); font-weight: 700; }
+.lesson-rec .practice {display: none; }
+body[data-mode="practice"] .lesson-rec .practice {display: block; }
+.lesson-rec .tasks {list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.lesson-rec .tasks li {display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; align-items: start; font-size: 14px; }
+.lesson-rec .tasks .box {width: 20px; height: 20px; border-radius: 5px; border: 2px solid var(--line-strong); display: flex; align-items: center; justify-content: center; font-size: 13px; color: #fff; }
+.lesson-rec .tasks li.done .box {background: var(--good); border-color: var(--good); }
+.lesson-rec .tasks li.done .txt {color: var(--muted); }
+.lesson-rec .digit-chips {display: flex; gap: 3px; margin-top: 4px; flex-wrap: wrap; }
+.lesson-rec .digit-chips span {font-family: var(--f-mono); font-size: 12px; width: 20px; height: 20px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; background: var(--sunken); color: var(--muted); }
+.lesson-rec .digit-chips span.on {background: var(--good); color: #fff; }
+.lesson-rec .presets {display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.lesson-rec .preset {border: 1px solid var(--line-strong); background: var(--surface); border-radius: 8px; padding: 8px 10px; text-align: left; display: flex; flex-direction: column; gap: 2px; }
+.lesson-rec .preset b {font-size: 14px; }
+.lesson-rec .preset span {font-size: 12px; color: var(--muted); line-height: 1.45; }
+.lesson-rec .preset[aria-checked="true"] {border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); background: var(--accent-soft); }
+.lesson-rec .fine {display: flex; flex-direction: column; gap: 8px; }
+.lesson-rec .fine-row {display: grid; grid-template-columns: 112px minmax(0, 1fr) 32px; gap: 10px; align-items: center; font-size: 14px; color: var(--ink-2); }
+.lesson-rec .fine-row input {width: 100%; }
+.lesson-rec .intro p {color: var(--ink-2); font-size: 14px; }
+.lesson-rec .input-row {display: flex; gap: 14px; align-items: center; }
+.lesson-rec .input-box {position: relative; width: 140px; height: 140px; flex: 0 0 auto; }
+.lesson-rec .input-box canvas {position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 6px; }
+.lesson-rec #inCanvas {border: 1px solid var(--line-strong); }
+.lesson-rec #heatCanvas {image-rendering: auto; pointer-events: none; }
+.lesson-rec .tiles {display: grid; grid-template-columns: repeat(auto-fill, minmax(58px, 1fr)); gap: 6px; }
+.lesson-rec .tile {display: flex; flex-direction: column; gap: 2px; align-items: stretch; border: 0; background: transparent; padding: 0; }
+.lesson-rec .tile canvas {width: 100%; aspect-ratio: 1; border-radius: 4px; outline: 1px solid var(--line); }
+.lesson-rec .tile span {font-family: var(--f-mono); font-size: 11px; color: var(--muted); text-align: center; }
+.lesson-rec .tile .ko {border-radius: 4px; }
+.lesson-rec .strip {display: flex; flex-wrap: wrap; gap: 3px; }
+.lesson-rec .strip button {width: 16px; height: 16px; border-radius: 3px; border: 1px solid var(--line); padding: 0; }
+.lesson-rec .fc-canvas {width: 100%; height: 300px; display: block; cursor: pointer; }
+.lesson-rec .ko-bar {display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 13px; color: var(--ink-2); border-top: 1px solid var(--line); padding-top: 10px; }
+.lesson-rec .ko-bar span {flex: 1 1 200px; }
+@media (max-width: 1200px) {
+.lesson-rec .stage {grid-template-columns: 1fr; }
+.lesson-rec .pad-box {width: min(100%, 420px, calc(100vh - 300px)); }
+.lesson-rec .side {flex-direction: row; flex-wrap: wrap; }
+}
+body.mobile .lesson-rec .stage {display: flex; flex-direction: column-reverse; align-items: stretch; gap: 8px; padding: 10px; }
+body.mobile .lesson-rec .pad-col {align-items: center; }
+body.mobile .lesson-rec .side {flex-direction: row; align-items: center; gap: 12px; }
+body.mobile .lesson-rec .seen {flex-direction: row; align-items: center; gap: 8px; }
+body.mobile .lesson-rec .seen canvas {width: 64px; height: 64px; }
+body.mobile .lesson-rec .seen .small {width: 70px; font-size: 11px; line-height: 1.35; }
+body.mobile .lesson-rec .verdict {flex: 1; min-width: 0; gap: 2px; }
+body.mobile .lesson-rec .verdict > .small:first-child {display: none; }
+body.mobile .lesson-rec .pred-digit {font-size: 34px; }
+body.mobile .lesson-rec .mini-probs i {height: 22px; }
+body.mobile .lesson-rec #predAll {display: none; }
+body.mobile .lesson-rec .pad-box {width: min(100%, calc(100dvh - 330px)); min-width: 0; align-self: center; }
+body.mobile .lesson-rec .pad-btns {justify-content: center; flex-wrap: nowrap; gap: 6px; width: 100%; }
+body.mobile .lesson-rec .pad-btns .btn {padding: 8px 10px; flex: 1 1 0; justify-content: center; min-width: 0; }
+body.mobile .lesson-rec .demo-ctl {flex: 2 1 0; }
+body.mobile .lesson-rec .see-brain {display: inline-flex; }
+body.mobile .lesson-rec .options, body.mobile .lesson-rec .intro {display: none; }
+body.mobile[data-mode="demo"] .lesson-rec .options, body.mobile[data-mode="demo"] .lesson-rec .intro {display: block; }
+body.mobile[data-mode="demo"] .lesson-rec .see-brain {display: none; }
+body.mobile .lesson-rec .practice {padding: 8px 10px; }
+body.mobile .lesson-rec .practice h2 {display: none; }
+body.mobile .lesson-rec .tasks {flex-direction: row; flex-wrap: wrap; gap: 6px 10px; }
+body.mobile .lesson-rec .tasks li {font-size: 12.5px; grid-template-columns: 18px auto; }
+body.mobile .lesson-rec .tasks .box {width: 16px; height: 16px; font-size: 11px; }
+body.mobile .lesson-rec .tasks .long {display: none; }
+body.mobile .lesson-rec .digit-chips span {width: 16px; height: 16px; font-size: 10px; }
+body.mobile .lesson-rec .presets {grid-template-columns: 1fr; }
+body.mobile .lesson-rec .fc-canvas {height: 260px; }
+body:not(.mobile) .lesson-rec .tasks .short {display: none; }
+body.mobile .lesson-rec .tiles {grid-template-columns: repeat(4, minmax(0, 1fr)); }
+body.mobile .lesson-rec .pad-btns .btn {white-space: nowrap; }
+body.mobile[data-mode="demo"] .lesson-rec .pad-btns {flex-wrap: wrap; }
+body.mobile[data-mode="demo"] .lesson-rec .pad-btns .btn {flex: 1 1 auto; }
+
+/* ===== 第二课 ===== */
+.lesson-shadow .m-map, .lesson-shadow .m-map-only, .lesson-shadow .m-compress, .lesson-shadow .m-invert {display: none; }
+body[data-mode="mdemo"] .lesson-shadow .m-map, body[data-mode="map"] .lesson-shadow .m-map, body[data-mode="map"] .lesson-shadow .m-map-only {display: block; }
+body[data-mode="compress"] .lesson-shadow .m-compress, body[data-mode="invert"] .lesson-shadow .m-invert {display: block; }
+body[data-mode="mdemo"] .lesson-shadow #m-cardInterp {display: none; }
+.lesson-shadow .map-wrap {display: flex; justify-content: center; }
+.lesson-shadow .map-box {position: relative; width: min(100%, calc(100vh - 430px), 640px); min-width: 280px; aspect-ratio: 1; background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  overflow: hidden; touch-action: none; cursor: crosshair; }
+.lesson-shadow .map-box canvas {position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
+.lesson-shadow .demo-badge {position: absolute; left: 8px; top: 8px; background: var(--ink); color: var(--surface); font-size: 12px; padding: 2px 8px; border-radius: 99px; pointer-events: none; }
+.lesson-shadow .map-tools {display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-top: 10px; }
+.lesson-shadow .seg {display: inline-flex; gap: 4px; }
+.lesson-shadow .chips {display: flex; flex-wrap: wrap; gap: 5px; }
+.lesson-shadow .chip {border: 1px solid var(--line-strong); background: var(--surface); border-radius: 99px; padding: 1px 9px 1px 7px; font-size: 13px; font-family: var(--f-mono); display: inline-flex; align-items: center; gap: 5px; }
+.lesson-shadow .chip i {width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.lesson-shadow .chip[aria-pressed="true"] {border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.lesson-shadow .shadow-card {display: none; }
+body[data-mode="mdemo"] .lesson-shadow .shadow-card, body[data-mode="map"] .lesson-shadow .shadow-card {display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: start; }
+.lesson-shadow .shadow-main {display: flex; gap: 14px; align-items: center; }
+.lesson-shadow .shadow {width: 140px; height: 140px; border: 1px solid var(--line-strong); border-radius: 8px; flex: 0 0 auto; }
+.lesson-shadow .shadow-info {display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.lesson-shadow .zline {font-size: 14px; color: var(--ink-2); }
+.lesson-shadow .verdict {font-size: 14px; color: var(--ink-2); }
+.lesson-shadow .verdict b {font-family: var(--f-mono); font-size: 22px; color: var(--ink); }
+body[data-mode="mdemo"] .lesson-shadow #m-slotMap {display: none; }
+.lesson-shadow .input-card {display: flex; flex-direction: column; gap: 8px; }
+.lesson-shadow .pad-box {position: relative; width: 180px; aspect-ratio: 1; border-radius: 8px; border: 1px solid var(--line-strong); background-color: var(--surface); --pad-ink: var(--ink);
+  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: calc(100% / 28) calc(100% / 28); overflow: hidden; touch-action: none; }
+.lesson-shadow .pad-box canvas {position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: crosshair; }
+.lesson-shadow .pad-hint {position: absolute; left: 0; right: 0; bottom: 8px; text-align: center; font-size: 13px; color: var(--muted); pointer-events: none; }
+.lesson-shadow .pad-btns {display: flex; gap: 6px; flex-wrap: wrap; }
+.lesson-shadow .see-brain {display: none; }
+.lesson-shadow .interp-row {display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 14px; }
+.lesson-shadow .interp-row select {border: 1px solid var(--line-strong); border-radius: 6px; padding: 4px 6px; background: var(--surface); font-family: var(--f-mono); }
+.lesson-shadow .film {width: 100%; max-width: 560px; margin-top: 8px; border: 1px solid var(--line); border-radius: 6px; }
+.lesson-shadow .only-desk-inline {display: inline; }
+body.touch .lesson-shadow .only-desk-inline {display: none; }
+.lesson-shadow .practice h2 {font-size: 15px; }
+.lesson-shadow .tasks {list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.lesson-shadow .tasks li {display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; align-items: start; font-size: 14px; }
+.lesson-shadow .tasks .box {width: 20px; height: 20px; border-radius: 5px; border: 2px solid var(--line-strong); display: flex; align-items: center; justify-content: center; font-size: 13px; color: #fff; }
+.lesson-shadow .tasks li.done .box {background: var(--good); border-color: var(--good); }
+.lesson-shadow .tasks li.done .txt {color: var(--muted); }
+.lesson-shadow .digit-chips {display: flex; gap: 3px; margin-top: 4px; flex-wrap: wrap; }
+.lesson-shadow .digit-chips span {font-family: var(--f-mono); font-size: 12px; width: 20px; height: 20px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; background: var(--sunken); color: var(--muted); }
+.lesson-shadow .digit-chips span.on {background: var(--good); color: #fff; }
+body:not(.mobile) .lesson-shadow .tasks .short {display: none; }
+.lesson-shadow .cmp-top {display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; align-items: start; margin: 8px 0; }
+.lesson-shadow .recon-grid {display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; }
+.lesson-shadow .rc {border: 1px solid var(--line); border-radius: 8px; padding: 6px; background: var(--surface); display: flex; flex-direction: column; gap: 4px; text-align: left; min-width: 0; }
+.lesson-shadow .rc canvas {width: 100%; aspect-ratio: 1; border-radius: 4px; border: 1px solid var(--line); }
+.lesson-shadow .rc b {font-size: 13px; }
+.lesson-shadow .rc b.clf {color: var(--clf); }
+.lesson-shadow .rc b.ae {color: var(--ae); }
+.lesson-shadow .rc span {font-size: 12px; color: var(--muted); line-height: 1.45; }
+.lesson-shadow .rc span em {font-style: normal; font-family: var(--f-mono); color: var(--ink); }
+.lesson-shadow .rc span em.miss {color: var(--bad); }
+.lesson-shadow .rc[aria-pressed="true"] {border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.lesson-shadow .rc .tweak {color: var(--accent); font-weight: 700; }
+.lesson-shadow .knobs {display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 6px 18px; margin: 6px 0 10px; }
+.lesson-shadow .knob {display: grid; grid-template-columns: 44px minmax(0, 1fr) 52px; gap: 8px; align-items: center; font-size: 13px; color: var(--ink-2); }
+.lesson-shadow .knob input {width: 100%; }
+.lesson-shadow .knob b {font-family: var(--f-mono); font-weight: 400; text-align: right; }
+.lesson-shadow .btn-row {display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.lesson-shadow .panels {display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.lesson-shadow .panel {display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.lesson-shadow .panel h3 {font-size: 14px; }
+.lesson-shadow .bars {display: flex; flex-direction: column; gap: 5px; position: relative; }
+.lesson-shadow .brow {display: grid; grid-template-columns: 104px minmax(0, 1fr) 58px; gap: 8px; align-items: center; font-size: 13px; }
+.lesson-shadow .brow .lab-n {color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lesson-shadow .brow .track {height: 13px; position: relative; }
+.lesson-shadow .brow .track i {position: absolute; left: 0; top: 0; bottom: 0; border-radius: 0 4px 4px 0; }
+.lesson-shadow .brow .track i.clf {background: var(--clf); }
+.lesson-shadow .brow .track i.ae {background: var(--ae); }
+.lesson-shadow .brow .val {font-family: var(--f-mono); font-size: 12px; text-align: right; }
+.lesson-shadow .brow.sep {margin-top: 6px; }
+.lesson-shadow .refline {position: absolute; border-left: 1px dashed var(--ink-2); pointer-events: none; }
+.lesson-shadow .fam-legend {display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--ink-2); margin-bottom: 8px; }
+.lesson-shadow .sw {display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
+.lesson-shadow .sw-clf {background: var(--clf); }
+.lesson-shadow .sw-ae {background: var(--ae); }
+.lesson-shadow .gal-wrap {overflow-x: auto; margin-top: 8px; }
+.lesson-shadow .gal {border-collapse: separate; border-spacing: 4px; }
+.lesson-shadow .gal th {font-weight: 500; font-size: 12.5px; text-align: right; padding-right: 6px; white-space: nowrap; color: var(--ink-2); }
+.lesson-shadow .gal th small {display: block; font-family: var(--f-mono); color: var(--muted); font-size: 11px; font-weight: 400; }
+.lesson-shadow .gal th.clf {color: var(--clf); }
+.lesson-shadow .gal th.ae {color: var(--ae); }
+.lesson-shadow .gal td {position: relative; padding: 0; }
+.lesson-shadow .gal td canvas {width: 44px; border-radius: 3px; border: 1px solid var(--line); }
+.lesson-shadow .gal td.miss canvas {border-color: var(--bad); box-shadow: 0 0 0 1px var(--bad); }
+.lesson-shadow .gal td .p {position: absolute; right: 3px; top: 1px; font-family: var(--f-mono); font-size: 10px; color: var(--bad); }
+.lesson-shadow .ten {display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; margin: 10px 0; }
+.lesson-shadow .cmp-grid {display: grid; grid-template-columns: 90px repeat(4, minmax(0, 60px)); gap: 6px; align-items: center; font-size: 12.5px; }
+.lesson-shadow .cmp-grid canvas {width: 100%; border-radius: 4px; border: 1px solid var(--line); }
+.lesson-shadow .cmp-grid .rl {color: var(--ink-2); line-height: 1.35; }
+.lesson-shadow .stats {width: 100%; border-collapse: collapse; font-size: 13px; }
+.lesson-shadow .stats th, .lesson-shadow .stats td {padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: right; }
+.lesson-shadow .stats th:first-child, .lesson-shadow .stats td:first-child {text-align: left; }
+.lesson-shadow .stats thead th {font-weight: 500; color: var(--ink-2); }
+.lesson-shadow .stats td.win {font-weight: 700; }
+.lesson-shadow .intro p {color: var(--ink-2); font-size: 14px; }
+.lesson-shadow .intro h2 {font-size: 15px; margin-bottom: 6px; }
+.lesson-shadow .brain-body {display: flex; flex-direction: column; gap: 14px; }
+.lesson-shadow .tiles {display: grid; grid-template-columns: repeat(auto-fill, minmax(52px, 1fr)); gap: 5px; }
+.lesson-shadow .tile {display: flex; flex-direction: column; gap: 2px; border: 0; background: transparent; padding: 0; }
+.lesson-shadow .tile canvas {width: 100%; aspect-ratio: 1; border-radius: 4px; outline: 1px solid var(--line); }
+.lesson-shadow .tile span {font-family: var(--f-mono); font-size: 11px; color: var(--muted); text-align: center; }
+.lesson-shadow .tile .ko {border-radius: 4px; }
+.lesson-shadow .strip {display: flex; flex-wrap: wrap; gap: 3px; }
+.lesson-shadow .strip button {width: 15px; height: 15px; border-radius: 3px; border: 1px solid var(--line); padding: 0; }
+.lesson-shadow .dots {width: 100%; height: 120px; display: block; cursor: pointer; }
+.lesson-shadow .code-bars {display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 4px 14px; }
+.lesson-shadow .code-bar {display: grid; grid-template-columns: 30px minmax(0, 1fr) 46px; gap: 6px; align-items: center; font-size: 12px; font-family: var(--f-mono); color: var(--ink-2); }
+.lesson-shadow .code-bar .track {height: 10px; background: var(--sunken); border-radius: 3px; position: relative; }
+.lesson-shadow .code-bar .track::before {content: ""; position: absolute; left: 50%; top: -2px; bottom: -2px; border-left: 1px solid var(--line-strong); }
+.lesson-shadow .code-bar .track i {position: absolute; top: 0; bottom: 0; background: var(--accent); border-radius: 3px; }
+.lesson-shadow .code-bar b {font-weight: 400; text-align: right; }
+.lesson-shadow .out-img {width: 112px; height: 112px; border: 1px solid var(--line-strong); border-radius: 6px; }
+.lesson-shadow .probs {display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 4px; max-width: 380px; align-items: end; }
+.lesson-shadow .probs div {display: flex; flex-direction: column; align-items: center; gap: 2px; font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+.lesson-shadow .probs i {display: block; width: 100%; height: 48px; background: var(--sunken); border-radius: 3px; position: relative; overflow: hidden; }
+.lesson-shadow .probs i b {position: absolute; left: 0; right: 0; bottom: 0; background: var(--line-strong); }
+.lesson-shadow .probs .hi i b {background: var(--clf); }
+.lesson-shadow .probs .hi {color: var(--ink); font-weight: 700; }
+.lesson-shadow .ko-bar {display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 13px; color: var(--ink-2); border-top: 1px solid var(--line); padding-top: 10px; }
+.lesson-shadow .ko-bar span {flex: 1 1 200px; }
+.lesson-shadow .loading {padding: 30px; text-align: center; color: var(--muted); }
+@media (max-width: 1200px) {
+.lesson-shadow .panels, .lesson-shadow .ten {grid-template-columns: 1fr; }
+body[data-mode="mdemo"] .lesson-shadow .shadow-card, body[data-mode="map"] .lesson-shadow .shadow-card {grid-template-columns: 1fr; }
+}
+body.mobile .lesson-shadow .card {padding: 10px; }
+body.mobile .lesson-shadow .map-box {width: min(100%, calc(100dvh - 400px)); min-width: 0; }
+body.mobile .lesson-shadow .map-tools {margin-top: 6px; gap: 6px; }
+body.mobile .lesson-shadow .map-tools .btn {min-height: 34px; padding: 4px 9px; font-size: 13px; }
+body.mobile.op .lesson-shadow .map-tools .chips {display: none; }
+body.mobile[data-mode="mdemo"] .lesson-shadow .map-tools .chips {display: flex; }
+body.mobile .lesson-shadow .shadow-card {grid-template-columns: auto minmax(0, 1fr) !important; gap: 10px !important; align-items: center !important; }
+body.mobile .lesson-shadow .shadow-main {flex-direction: column; align-items: flex-start; gap: 4px; }
+body.mobile .lesson-shadow .shadow {width: 96px; height: 96px; }
+body.mobile .lesson-shadow .shadow-info .small {display: none; }
+body.mobile .lesson-shadow .zline {font-size: 12px; }
+body.mobile .lesson-shadow .verdict {font-size: 12px; }
+body.mobile .lesson-shadow .verdict b {font-size: 16px; }
+body.mobile .lesson-shadow #m-slotMap .input-card {flex-direction: row; align-items: center; gap: 8px; }
+body.mobile .lesson-shadow #m-slotMap .pad-box {width: 132px; }
+body.mobile .lesson-shadow #m-slotMap .pad-btns {flex-direction: column; gap: 4px; flex-wrap: nowrap; flex: 0 0 auto; }
+body.mobile .lesson-shadow #m-slotMap .pad-btns .btn {min-height: 30px; padding: 3px 8px; font-size: 13px; white-space: nowrap; justify-content: center; }
+body.mobile .lesson-shadow .see-brain {display: inline-flex; }
+body.mobile[data-mode="mdemo"] .lesson-shadow .see-brain, body.mobile[data-mode="compress"] .lesson-shadow .see-brain, body.mobile[data-mode="invert"] .lesson-shadow .see-brain {display: none; }
+body.mobile .lesson-shadow .interp-row {gap: 5px; font-size: 13px; }
+body.mobile .lesson-shadow .interp-row .btn {min-height: 34px; padding: 4px 10px; }
+body.mobile .lesson-shadow .film {display: none; }
+body.mobile .lesson-shadow .practice {padding: 8px 10px; }
+body.mobile .lesson-shadow .practice h2 {display: none; }
+body.mobile .lesson-shadow .tasks {flex-direction: row; flex-wrap: wrap; gap: 4px 10px; }
+body.mobile .lesson-shadow .tasks li {font-size: 12.5px; grid-template-columns: 18px auto; }
+body.mobile .lesson-shadow .tasks .box {width: 16px; height: 16px; font-size: 11px; }
+body.mobile .lesson-shadow .tasks .long {display: none; }
+body.mobile .lesson-shadow .tasks .digit-chips {display: none; }
+body.mobile .lesson-shadow .cmp-top {grid-template-columns: 1fr; }
+body.mobile .lesson-shadow .cmp-top .pad-box {width: min(100%, 300px); }
+body.mobile .lesson-shadow .recon-grid {grid-template-columns: repeat(3, minmax(0, 1fr)); }
+body.mobile .lesson-shadow .panels, body.mobile .lesson-shadow .ten {grid-template-columns: 1fr; }
+body.mobile .lesson-shadow .brow {grid-template-columns: 92px minmax(0, 1fr) 54px; }
+body.mobile .lesson-shadow .knobs {grid-template-columns: 1fr; }
+body.mobile .lesson-shadow .knob input {min-height: 32px; }
+body.mobile .lesson-shadow .tiles {grid-template-columns: repeat(4, minmax(0, 1fr)); }
+body.mobile.op .lesson-shadow .intro {display: none; }

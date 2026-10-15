@@ -1,0 +1,8 @@
+# PyTorch 请按自己的显卡安装对应 CUDA 版本：https://pytorch.org/get-started/locally/
+torch>=2.11
+torchvision>=0.26
+numpy>=2.5
+scikit-learn>=1.9
+mini-racer>=0.14
+websocket-client>=1.9
+pytest>=9.1

@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>手写数字实验台</title>
+<meta name="description" content="第一课：手写一个数字，看卷积神经网络每一层怎样认出它；第二课：把它压成平面上的一个点，再从任意一点画回数字的影子。">
+<link rel="stylesheet" href="assets/base.css">
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><h1>手写数字实验台</h1><span class="series">{{SERIES_NAME}}</span></div>
+    <nav class="chapters" aria-label="课程"></nav>
+    <nav class="tabs" aria-label="模式"></nav>
+    <div class="spacer"></div>
+    <div class="tools">
+      <button class="btn" id="btnBig" type="button" aria-pressed="false" title="右侧大脑面板变宽，适合投影">大屏模式</button>
+      <button class="btn icon" id="btnHelp" type="button" title="操作说明（H）" aria-label="操作说明">?</button>
+      <button class="btn quit" id="btnQuit" type="button">退出</button>
+    </div>
+    <button class="btn menu-btn" id="btnMenu" type="button" aria-label="菜单">☰</button>
+  </header>
+
+  <main class="grid">
+    <!-- ================= 第一课：识别 ================= -->
+    <section class="left lesson-rec">
+      <div class="card stage">
+        <div class="pad-col">
+          <div class="pad-box" id="padBox">
+            <canvas id="pad" aria-label="手写板"></canvas>
+            <div class="pad-hint" id="padHint">在这里写一个 0–9 的数字</div>
+            <div class="demo-badge" id="demoBadge" hidden></div>
+          </div>
+          <div class="pad-btns">
+            <button class="btn" id="btnClear" type="button">清除</button>
+            <button class="btn" id="btnUndo" type="button">撤销</button>
+            <button class="btn" id="btnSample" type="button">示例</button>
+            <span class="demo-ctl">
+              <button class="btn" id="btnPause" type="button" aria-pressed="false">暂停</button>
+              <button class="btn" id="btnNext" type="button">下一张</button>
+            </span>
+            <button class="btn primary see-brain" type="button" data-open-brain>看大脑</button>
+          </div>
+        </div>
+        <div class="side">
+          <div class="seen">
+            <canvas class="px" id="seen" width="28" height="28"></canvas>
+            <span class="small">模型实际看到的 28×28 输入</span>
+          </div>
+          <div class="verdict">
+            <div class="small">网络的判断</div>
+            <div class="pred"><span class="pred-digit num" id="predDigit">–</span><span class="pred-conf" id="predConf"></span></div>
+            <div class="mini-probs" id="miniProbs"></div>
+            <div class="small" id="predAll"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card practice" id="practice">
+        <h2>练习任务 <span class="small" id="taskCount"></span></h2>
+        <ul class="tasks" id="tasks"></ul>
+      </div>
+
+      <div class="card options">
+        <h2>网络大小</h2>
+        <div class="presets" id="presets" role="radiogroup" aria-label="网络大小"></div>
+        <h2 style="margin-top:12px">细调</h2>
+        <div class="fine">
+          <label class="fine-row" for="rngWidth"><span>笔画粗细</span><input type="range" id="rngWidth" min="12" max="34" step="1" value="22"><b class="num" id="valWidth">22</b></label>
+          <label class="fine-row" for="rngK"><span>每层展开通道数</span><input type="range" id="rngK" min="2" max="32" step="1" value="8"><b class="num" id="valK">8</b></label>
+          <label class="switch" for="chkHeat"><input type="checkbox" id="chkHeat" checked> 在输入图上叠加"网络在看哪里"</label>
+        </div>
+      </div>
+
+      <div class="card intro">
+        <h2>第一课在演示什么</h2>
+        <p>手写的数字先被缩放、居中成 28×28 的灰度图（784 个数），再交给神经网络。卷积层用一组 3×3 的小"探测器"在图上滑动，找横、竖、斜的笔画；越往后，图越小、通道越多，越来越抽象；最后 10 个数换算成"是 0–9 的概率"。右边显示的都是此刻真实算出来的数，不是动画。学完这一课，切到上方的"第二课 · 影子"：把同样的卷积网络反过来用，从几个数画回一张图。</p>
+      </div>
+    </section>
+
+    <aside class="brain lesson-rec" id="brain" aria-label="网络内部">
+      <div class="brain-back"><button class="btn" type="button" data-close-brain>← 返回</button><b>网络内部</b></div>
+      <div class="brain-head">
+        <h2>网络内部 · <span id="presetName"></span></h2>
+        <div class="formula" id="formula"></div>
+        <div class="small" id="paramsLine"></div>
+      </div>
+      <div class="arch">
+        <div class="layer-title"><b>网络结构</b><span>每一块是一层：块越大，特征图越大；叠得越厚，通道越多。块上是此刻真实的激活。</span></div>
+        <div class="arch-legend"><span><i style="background:var(--k-conv)"></i>卷积</span><span><i style="background:var(--k-pool)"></i>池化</span><span><i style="background:var(--k-fc)"></i>全连接</span><span><i style="background:var(--k-io)"></i>输入 / 输出</span></div>
+        <div class="arch-wrap" id="archRec"></div>
+        <div class="arch-info" id="archRecInfo"></div>
+      </div>
+
+      <div class="layer">
+        <div class="layer-title"><b>输入层</b><span id="inTitle">784 个数（28×28 灰度）</span></div>
+        <div class="input-row">
+          <div class="input-box"><canvas class="px" id="inCanvas" width="28" height="28"></canvas><canvas id="heatCanvas" width="28" height="28"></canvas></div>
+          <p class="small" id="heatNote"></p>
+        </div>
+      </div>
+      <div class="layer" id="layerC1">
+        <div class="layer-title"><b>卷积层 1</b><span id="c1Title"></span></div>
+        <div class="tiles" id="c1Tiles"></div>
+        <div class="strip" id="c1Strip"></div>
+      </div>
+      <div class="layer" id="layerC2">
+        <div class="layer-title"><b>卷积层 2</b><span id="c2Title"></span></div>
+        <div class="tiles" id="c2Tiles"></div>
+        <div class="strip" id="c2Strip"></div>
+      </div>
+      <div class="layer" id="noConv" hidden>
+        <p class="small">这一档没有卷积层：784 个像素直接全部连到全连接层的每个神经元，网络不知道哪些像素是"相邻"的。</p>
+      </div>
+      <div class="layer">
+        <div class="layer-title"><b>全连接层 → 输出层</b><span id="fcTitle"></span></div>
+        <canvas id="fcCanvas" class="fc-canvas"></canvas>
+        <div class="small" id="fcHover">鼠标移到圆点上看单个神经元；点一下把它"敲掉"。</div>
+      </div>
+      <div class="ko-bar">
+        <span id="koText">没有敲掉任何神经元</span>
+        <button class="btn" type="button" id="btnKoRand">随机敲掉 25%</button>
+        <button class="btn" type="button" id="btnKoReset">全部恢复</button>
+      </div>
+    </aside>
+
+    <!-- ================= 第二课：影子 ================= -->
+    <section class="left lesson-shadow">
+      <div class="card m-map" id="m-cardMap">
+        <div class="map-wrap">
+          <div class="map-box" id="m-mapBox"><canvas id="m-mapBase"></canvas><canvas id="m-mapTop"></canvas><div class="demo-badge" id="m-demoBadge" hidden>演示 · 点在地图上自动游走</div></div>
+        </div>
+        <div class="map-tools">
+          <div class="seg" role="group" aria-label="显示">
+            <button class="btn" id="m-btnPts" type="button" aria-pressed="true">测试图分布</button>
+            <button class="btn" id="m-btnGrid" type="button" aria-pressed="false">铺满影子</button>
+          </div>
+          <div class="seg" role="group" aria-label="范围">
+            <button class="btn" id="m-btnZoom" type="button" aria-pressed="true">放大中心区</button>
+            <button class="btn" id="m-btnFull" type="button" aria-pressed="false">全景</button>
+          </div>
+          <div class="chips" id="m-digitChips" role="group" aria-label="只看某个数字"></div>
+        </div>
+      </div>
+
+      <div class="card m-map shadow-card" id="m-cardShadow">
+        <div class="shadow-main">
+          <canvas class="px shadow" id="m-shadow" width="28" height="28" aria-label="当前点解码出来的影子"></canvas>
+          <div class="shadow-info">
+            <div class="small">这个点的影子</div>
+            <div class="zline num" id="m-zLine"></div>
+            <div class="verdict" id="m-shadowVerdict"></div>
+          </div>
+        </div>
+        <div class="slot" id="m-slotMap"></div>
+      </div>
+
+      <div class="card m-map interp-card" id="m-cardInterp">
+        <div class="interp-row">
+          <span>从</span><select id="m-selA" aria-label="起点数字"></select><span>走到</span><select id="m-selB" aria-label="终点数字"></select>
+          <button class="btn primary" id="m-btnPlay" type="button">▶ 播放</button>
+          <span class="small only-desk-inline">点在地图上沿直线移动，每一步都解码成影子</span>
+        </div>
+        <canvas class="px film" id="m-film" width="280" height="28" aria-label="渐变胶片"></canvas>
+      </div>
+
+      <div class="card m-map-only practice" id="m-cardTasks">
+        <h2>练习任务 <span class="small" id="m-taskCount"></span></h2>
+        <ul class="tasks" id="m-tasks"></ul>
+      </div>
+
+      <div class="card m-compress" id="m-cardCompress">
+        <h2>同一张图，压成不同个数的数再还原</h2>
+        <div class="cmp-top">
+          <div class="slot" id="m-slotCompress"></div>
+          <div class="recon-grid" id="m-reconGrid"></div>
+        </div>
+        <p class="small">点任意一张还原图，右边的"网络内部"就换成那个自编码器。"误差"是这张图逐像素的均方误差；"认作"是把还原图交给第一课的识别网络后的判断。</p>
+      </div>
+      <div class="card m-compress" id="m-cardKnobs">
+        <h2>拧旋钮：直接改编码里的数 <span class="small" id="m-knobTitle"></span></h2>
+        <div class="knobs" id="m-knobs"></div>
+        <div class="btn-row"><button class="btn" id="m-btnKnobReset" type="button">回到这张图自己的编码</button></div>
+      </div>
+      <div class="card m-compress" id="m-cardCurve">
+        <h2>测试集 1 万张的平均结果</h2>
+        <div class="panels" id="m-aePanels"></div>
+      </div>
+
+      <div class="card m-invert" id="m-cardInvert">
+        <h2>识别网络每一层还剩多少原图信息？</h2>
+        <p class="small">识别网络（训练好后冻结）每一层的输出，各自交给一个单独训练的"反演解码器"去还原。还原不出来的部分，就是那一层已经丢掉的信息。最后两张是自编码器作对照。</p>
+        <div class="cmp-top">
+          <div class="slot" id="m-slotInvert"></div>
+          <div class="recon-grid" id="m-invGrid"></div>
+        </div>
+      </div>
+      <div class="card m-invert">
+        <h2>两把尺子：测试集 1 万张</h2>
+        <div class="fam-legend"><span><i class="sw sw-clf"></i>识别网络某一层 → 反演解码器</span><span><i class="sw sw-ae"></i>自编码器（瓶颈 d 个数）</span></div>
+        <div class="panels" id="m-invPanels"></div>
+        <p class="small" id="m-invText"></p>
+      </div>
+      <div class="card m-invert">
+        <h2>逐张对照</h2>
+        <div class="btn-row" id="m-galCtrl"><span class="small">换一组：</span></div>
+        <div class="gal-wrap"><table class="gal" id="m-gal"></table></div>
+        <p class="small">带红框的还原图被识别网络认错了，右上角是它认成的数字。</p>
+      </div>
+      <div class="card m-invert">
+        <h2>同样是 10 个数，记住的东西不一样</h2>
+        <div class="chips" id="m-tenChips" role="group" aria-label="选择数字"></div>
+        <div class="ten">
+          <div class="cmp-grid" id="m-tenGrid"></div>
+          <table class="stats" id="m-tenStats"></table>
+        </div>
+        <p class="small" id="m-tenText"></p>
+      </div>
+
+      <div class="card intro" id="m-cardIntro"></div>
+
+      <!-- 输入卡片：画板随模式移动到对应位置 -->
+      <div hidden>
+        <div class="input-card" id="m-inputCard">
+          <div class="pad-box" id="m-padBox"><canvas id="m-pad" aria-label="手写板"></canvas><div class="pad-hint" id="m-padHint">写一个数字</div></div>
+          <div class="pad-btns">
+            <button class="btn" id="m-btnClear" type="button">清除</button>
+            <button class="btn" id="m-btnUndo" type="button">撤销</button>
+            <button class="btn" id="m-btnSample" type="button">示例</button>
+            <button class="btn primary see-brain" type="button" data-open-brain>看大脑</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="brain lesson-shadow" id="m-brain" aria-label="网络内部">
+      <div class="brain-back"><button class="btn" type="button" data-close-brain>← 返回</button><b>网络内部</b></div>
+      <div class="brain-head">
+        <h2 id="m-brainTitle"></h2>
+        <div class="formula" id="m-formula"></div>
+        <div class="small" id="m-paramsLine"></div>
+      </div>
+      <div class="arch">
+        <div class="layer-title"><b>网络结构</b><span id="m-archNote"></span></div>
+        <div class="arch-legend"><span><i style="background:var(--k-conv)"></i>卷积</span><span><i style="background:var(--k-pool)"></i>池化</span><span><i style="background:var(--k-fc)"></i>全连接</span><span><i style="background:var(--k-code)"></i>编码层（瓶颈）</span><span><i style="background:var(--k-convT)"></i>反卷积</span><span><i style="background:var(--k-io)"></i>输入 / 输出</span></div>
+        <div class="arch-wrap" id="m-arch"></div>
+        <div class="arch-info" id="m-archInfo"></div>
+      </div>
+      <div id="m-brainBody" class="brain-body"></div>
+      <div class="ko-bar">
+        <span id="m-koText"></span>
+        <button class="btn" type="button" id="m-btnKoRand">随机敲掉 25%</button>
+        <button class="btn" type="button" id="m-btnKoReset">全部恢复</button>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="foot" id="credits">
+    <p>{{AUTHOR_EN}} · {{UNIVERSITY_EN}} · {{UNIVERSITY_KO}}</p>
+    <p>{{SERIES_NAME}} 系列 · 代码 MIT · 文档与教学素材 CC BY 4.0 · 手写数字数据：MNIST © Yann LeCun、Corinna Cortes，CC BY-SA 3.0 · v{{VERSION}}</p>
+  </footer>
+</div>
+
+<div class="overlay" id="help" role="dialog" aria-modal="true" aria-labelledby="helpTitle" hidden>
+  <div class="sheet">
+    <div class="sheet-body">
+      <h2 id="helpTitle">手写数字实验台</h2>
+      <p>两课连着学：<b>第一课 · 识别</b>，写一个数字，看卷积神经网络怎样一层层认出它；<b>第二课 · 影子</b>，用同样的卷积结构把图压成几个数再画回来，压到只剩 2 个数时，每张图就是平面上的一个点，地图上任意一点都能画出一个"影子"。顶部左边切换课程，右边切换模式。</p>
+      <div class="help-figure">
+        <svg width="150" height="150" viewBox="0 0 150 150" role="img" aria-label="动画：在方格里写一个 7">
+          <rect x="1" y="1" width="148" height="148" rx="10" fill="var(--surface)" stroke="var(--line-strong)"></rect>
+          <g stroke="var(--line)" stroke-width="1"><path d="M30 1V149M60 1V149M90 1V149M120 1V149M1 30H149M1 60H149M1 90H149M1 120H149"></path></g>
+          <path class="anim-stroke" style="--len:200" d="M38 40 L112 40 L64 118" fill="none" stroke="var(--ink)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"></path>
+          <circle class="anim-tip" r="7" fill="var(--accent)" style="offset-path: path('M38 40 L112 40 L64 118')"></circle>
+        </svg>
+        <div class="only-desk">
+          <ul>
+            <li><b>写字</b>：在画板上按住鼠标左键拖动；松开后，右边的"网络内部"会更新。</li>
+            <li><b>看结构</b>：右边"网络结构"里每一块是一层。鼠标停在某一层上，看它有多少神经元、怎么连接；点一下，播放这一层怎么算（卷积核滑动、池化、全连接求和、反卷积盖章）。</li>
+            <li><b>敲掉神经元</b>：点特征图小方块或圆点，把它置零，看结果怎么变；"全部恢复"复原。</li>
+            <li><b>第二课的地图</b>：鼠标在地图上移动，旁边实时画出这个点的影子。</li>
+          </ul>
+        </div>
+        <div class="only-touch">
+          <svg width="170" height="220" viewBox="0 0 170 220" role="img" aria-label="手机操作图解">
+            <rect x="10" y="4" width="150" height="212" rx="18" fill="var(--surface)" stroke="var(--ink-2)" stroke-width="2"></rect>
+            <rect x="22" y="22" width="126" height="26" rx="5" fill="var(--sunken)"></rect>
+            <text x="30" y="40" font-size="11" fill="var(--ink-2)">28×28 · 判断 7</text>
+            <rect x="22" y="56" width="126" height="118" rx="6" fill="var(--paper)" stroke="var(--line-strong)"></rect>
+            <path d="M52 82 L118 82 L74 160" fill="none" stroke="var(--ink)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"></path>
+            <circle cx="74" cy="160" r="12" fill="var(--accent)" opacity=".35"></circle>
+            <text x="96" y="152" font-size="11" fill="var(--ink-2)">手指写</text>
+            <rect x="22" y="182" width="36" height="22" rx="5" fill="var(--sunken)"></rect><text x="28" y="197" font-size="10" fill="var(--ink-2)">清除</text>
+            <rect x="96" y="182" width="52" height="22" rx="5" fill="var(--accent)"></rect><text x="103" y="197" font-size="10" fill="#fff">看大脑</text>
+          </svg>
+          <ul>
+            <li><b>写字</b>：用手指在方格里写；边写边出判断。</li>
+            <li><b>看大脑</b>：点"看大脑"全屏查看网络结构和每一层，结构图可以左右滑；点某一层看它怎么算。点"返回"回来。</li>
+            <li><b>第二课的地图</b>：手指在地图上按住拖动，下方的影子跟着变。</li>
+            <li><b>更多</b>：右上角 ☰ 里可以换网络大小、再看这份说明、退出。</li>
+          </ul>
+        </div>
+      </div>
+      <p><b>第一课的模式</b>：演示（自动轮播测试集）、我来写、练习（4 个小任务）。<b>第二课的模式</b>：演示（点在地图上自动游走）、地图（自己拖、自己写，有练习任务）、压缩多少（2/4/10/16/32 个数，能拧编码里的数）、识别网络丢了什么（第一课的网络每一层还剩多少原图信息）。</p>
+      <p class="only-desk small">快捷键（第一课）：<kbd>C</kbd> 清除　<kbd>Z</kbd> 撤销　<kbd>E</kbd> 示例　<kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> 换网络　<kbd>空格</kbd> 暂停演示。（第二课）：<kbd>G</kbd> 铺满影子　<kbd>F</kbd> 全景 / 放大　<kbd>P</kbd> 播放渐变。通用：<kbd>H</kbd> 说明　<kbd>Esc</kbd> 关闭</p>
+      <p class="small">"网络在看哪里"的热力图用遮挡法算：依次遮住图上一小块，看判断的把握掉多少。它说明的是相关性，不代表因果。</p>
+    </div>
+    <div class="sheet-foot"><button class="btn primary" id="helpStart" type="button">开始</button></div>
+  </div>
+</div>
+<div class="landscape-hint">竖屏体验更佳</div>
+
+<script src="assets/nn.js"></script>
+<script src="assets/arch.js"></script>
+<script src="assets/archviz.js"></script>
+<script src="assets/pad.js"></script>
+<script src="assets/ui.js"></script>
+<script src="assets/gen/lab.js"></script>
+<script src="assets/lab.js"></script>
+<script src="assets/map.js"></script>
+<script src="assets/main.js"></script>
+</body>
+</html>

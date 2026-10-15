@@ -1,0 +1,352 @@
+[classifier] epoch  1/10  loss 1.3130
+[classifier] epoch  2/10  loss 0.1687
+[classifier] epoch  3/10  loss 0.0730
+[classifier] epoch  4/10  loss 0.0490
+[classifier] epoch  5/10  loss 0.0359
+[classifier] epoch  6/10  loss 0.0264
+[classifier] epoch  7/10  loss 0.0199
+[classifier] epoch  8/10  loss 0.0143
+[classifier] epoch  9/10  loss 0.0110
+[classifier] epoch 10/10  loss 0.0096
+classifier test acc = 0.9916
+[    inv_C1] epoch  1/20  loss 536.4511
+[    inv_C1] epoch  2/20  loss 267.4162
+[    inv_C1] epoch  3/20  loss 80.7173
+[    inv_C1] epoch  4/20  loss 60.4757
+[    inv_C1] epoch  5/20  loss 54.9242
+[    inv_C1] epoch  6/20  loss 53.0030
+[    inv_C1] epoch  7/20  loss 52.1891
+[    inv_C1] epoch  8/20  loss 51.7296
+[    inv_C1] epoch  9/20  loss 51.4015
+[    inv_C1] epoch 10/20  loss 51.1583
+[    inv_C1] epoch 11/20  loss 50.9784
+[    inv_C1] epoch 12/20  loss 50.8409
+[    inv_C1] epoch 13/20  loss 50.7327
+[    inv_C1] epoch 14/20  loss 50.6477
+[    inv_C1] epoch 15/20  loss 50.5816
+[    inv_C1] epoch 16/20  loss 50.5326
+[    inv_C1] epoch 17/20  loss 50.4983
+[    inv_C1] epoch 18/20  loss 50.4770
+[    inv_C1] epoch 19/20  loss 50.4663
+[    inv_C1] epoch 20/20  loss 50.4628
+[    inv_C2] epoch  1/20  loss 380.0784
+[    inv_C2] epoch  2/20  loss 116.7684
+[    inv_C2] epoch  3/20  loss 73.0900
+[    inv_C2] epoch  4/20  loss 64.1238
+[    inv_C2] epoch  5/20  loss 60.7818
+[    inv_C2] epoch  6/20  loss 59.0305
+[    inv_C2] epoch  7/20  loss 57.9327
+[    inv_C2] epoch  8/20  loss 57.2270
+[    inv_C2] epoch  9/20  loss 56.7057
+[    inv_C2] epoch 10/20  loss 56.2907
+[    inv_C2] epoch 11/20  loss 56.0133
+[    inv_C2] epoch 12/20  loss 55.7599
+[    inv_C2] epoch 13/20  loss 55.5825
+[    inv_C2] epoch 14/20  loss 55.4375
+[    inv_C2] epoch 15/20  loss 55.3279
+[    inv_C2] epoch 16/20  loss 55.2495
+[    inv_C2] epoch 17/20  loss 55.1893
+[    inv_C2] epoch 18/20  loss 55.1512
+[    inv_C2] epoch 19/20  loss 55.1302
+[    inv_C2] epoch 20/20  loss 55.1219
+[    inv_F1] epoch  1/20  loss 332.4743
+[    inv_F1] epoch  2/20  loss 146.5974
+[    inv_F1] epoch  3/20  loss 107.0421
+[    inv_F1] epoch  4/20  loss 93.8241
+[    inv_F1] epoch  5/20  loss 87.8034
+[    inv_F1] epoch  6/20  loss 84.1705
+[    inv_F1] epoch  7/20  loss 81.4473
+[    inv_F1] epoch  8/20  loss 79.3493
+[    inv_F1] epoch  9/20  loss 77.9943
+[    inv_F1] epoch 10/20  loss 76.7990
+[    inv_F1] epoch 11/20  loss 75.7371
+[    inv_F1] epoch 12/20  loss 74.9415
+[    inv_F1] epoch 13/20  loss 74.1349
+[    inv_F1] epoch 14/20  loss 73.5725
+[    inv_F1] epoch 15/20  loss 72.9846
+[    inv_F1] epoch 16/20  loss 72.5901
+[    inv_F1] epoch 17/20  loss 72.2035
+[    inv_F1] epoch 18/20  loss 71.9294
+[    inv_F1] epoch 19/20  loss 71.7414
+[    inv_F1] epoch 20/20  loss 71.6508
+[inv_logits] epoch  1/20  loss 334.4598
+[inv_logits] epoch  2/20  loss 167.4761
+[inv_logits] epoch  3/20  loss 142.2785
+[inv_logits] epoch  4/20  loss 132.5721
+[inv_logits] epoch  5/20  loss 128.1754
+[inv_logits] epoch  6/20  loss 125.1076
+[inv_logits] epoch  7/20  loss 122.8626
+[inv_logits] epoch  8/20  loss 121.2461
+[inv_logits] epoch  9/20  loss 119.7784
+[inv_logits] epoch 10/20  loss 118.6685
+[inv_logits] epoch 11/20  loss 117.6436
+[inv_logits] epoch 12/20  loss 116.7624
+[inv_logits] epoch 13/20  loss 115.9682
+[inv_logits] epoch 14/20  loss 115.2422
+[inv_logits] epoch 15/20  loss 114.6214
+[inv_logits] epoch 16/20  loss 114.0793
+[inv_logits] epoch 17/20  loss 113.5847
+[inv_logits] epoch 18/20  loss 113.2198
+[inv_logits] epoch 19/20  loss 112.9577
+[inv_logits] epoch 20/20  loss 112.8112
+[      ae_2] epoch  1/25  loss 393.5062
+[      ae_2] epoch  2/25  loss 206.3945
+[      ae_2] epoch  3/25  loss 186.9839
+[      ae_2] epoch  4/25  loss 169.6453
+[      ae_2] epoch  5/25  loss 158.9697
+[      ae_2] epoch  6/25  loss 152.9728
+[      ae_2] epoch  7/25  loss 149.3580
+[      ae_2] epoch  8/25  loss 146.9220
+[      ae_2] epoch  9/25  loss 145.1195
+[      ae_2] epoch 10/25  loss 143.6426
+[      ae_2] epoch 11/25  loss 142.5683
+[      ae_2] epoch 12/25  loss 141.4313
+[      ae_2] epoch 13/25  loss 140.6768
+[      ae_2] epoch 14/25  loss 139.9929
+[      ae_2] epoch 15/25  loss 139.2468
+[      ae_2] epoch 16/25  loss 138.6358
+[      ae_2] epoch 17/25  loss 138.0690
+[      ae_2] epoch 18/25  loss 137.5977
+[      ae_2] epoch 19/25  loss 137.1981
+[      ae_2] epoch 20/25  loss 136.7442
+[      ae_2] epoch 21/25  loss 136.4434
+[      ae_2] epoch 22/25  loss 136.1709
+[      ae_2] epoch 23/25  loss 135.9847
+[      ae_2] epoch 24/25  loss 135.8517
+[      ae_2] epoch 25/25  loss 135.7875
+[      ae_4] epoch  1/25  loss 325.3102
+[      ae_4] epoch  2/25  loss 199.4224
+[      ae_4] epoch  3/25  loss 152.5564
+[      ae_4] epoch  4/25  loss 137.0272
+[      ae_4] epoch  5/25  loss 130.8947
+[      ae_4] epoch  6/25  loss 125.6249
+[      ae_4] epoch  7/25  loss 121.5343
+[      ae_4] epoch  8/25  loss 118.8432
+[      ae_4] epoch  9/25  loss 116.9058
+[      ae_4] epoch 10/25  loss 115.3797
+[      ae_4] epoch 11/25  loss 114.1798
+[      ae_4] epoch 12/25  loss 113.1615
+[      ae_4] epoch 13/25  loss 112.4147
+[      ae_4] epoch 14/25  loss 111.7339
+[      ae_4] epoch 15/25  loss 111.0755
+[      ae_4] epoch 16/25  loss 110.5378
+[      ae_4] epoch 17/25  loss 109.9980
+[      ae_4] epoch 18/25  loss 109.5773
+[      ae_4] epoch 19/25  loss 109.1989
+[      ae_4] epoch 20/25  loss 108.8118
+[      ae_4] epoch 21/25  loss 108.5202
+[      ae_4] epoch 22/25  loss 108.2886
+[      ae_4] epoch 23/25  loss 108.1095
+[      ae_4] epoch 24/25  loss 107.9889
+[      ae_4] epoch 25/25  loss 107.9230
+[     ae_10] epoch  1/25  loss 321.3901
+[     ae_10] epoch  2/25  loss 198.5828
+[     ae_10] epoch  3/25  loss 137.6133
+[     ae_10] epoch  4/25  loss 101.2511
+[     ae_10] epoch  5/25  loss 93.4023
+[     ae_10] epoch  6/25  loss 89.7393
+[     ae_10] epoch  7/25  loss 87.3028
+[     ae_10] epoch  8/25  loss 85.4373
+[     ae_10] epoch  9/25  loss 83.8722
+[     ae_10] epoch 10/25  loss 82.6626
+[     ae_10] epoch 11/25  loss 81.8064
+[     ae_10] epoch 12/25  loss 80.9364
+[     ae_10] epoch 13/25  loss 80.1720
+[     ae_10] epoch 14/25  loss 79.5324
+[     ae_10] epoch 15/25  loss 79.0240
+[     ae_10] epoch 16/25  loss 78.4940
+[     ae_10] epoch 17/25  loss 78.0834
+[     ae_10] epoch 18/25  loss 77.6582
+[     ae_10] epoch 19/25  loss 77.3086
+[     ae_10] epoch 20/25  loss 77.0166
+[     ae_10] epoch 21/25  loss 76.7620
+[     ae_10] epoch 22/25  loss 76.5534
+[     ae_10] epoch 23/25  loss 76.3996
+[     ae_10] epoch 24/25  loss 76.2965
+[     ae_10] epoch 25/25  loss 76.2403
+[     ae_16] epoch  1/25  loss 333.5147
+[     ae_16] epoch  2/25  loss 203.1248
+[     ae_16] epoch  3/25  loss 143.2983
+[     ae_16] epoch  4/25  loss 99.3028
+[     ae_16] epoch  5/25  loss 85.6859
+[     ae_16] epoch  6/25  loss 80.6215
+[     ae_16] epoch  7/25  loss 77.5600
+[     ae_16] epoch  8/25  loss 75.2735
+[     ae_16] epoch  9/25  loss 73.5435
+[     ae_16] epoch 10/25  loss 72.2656
+[     ae_16] epoch 11/25  loss 71.2998
+[     ae_16] epoch 12/25  loss 70.2611
+[     ae_16] epoch 13/25  loss 69.5818
+[     ae_16] epoch 14/25  loss 68.9777
+[     ae_16] epoch 15/25  loss 68.4501
+[     ae_16] epoch 16/25  loss 68.0052
+[     ae_16] epoch 17/25  loss 67.6133
+[     ae_16] epoch 18/25  loss 67.2723
+[     ae_16] epoch 19/25  loss 66.9880
+[     ae_16] epoch 20/25  loss 66.7468
+[     ae_16] epoch 21/25  loss 66.5444
+[     ae_16] epoch 22/25  loss 66.3765
+[     ae_16] epoch 23/25  loss 66.2512
+[     ae_16] epoch 24/25  loss 66.1715
+[     ae_16] epoch 25/25  loss 66.1269
+[     ae_32] epoch  1/25  loss 389.4246
+[     ae_32] epoch  2/25  loss 202.0844
+[     ae_32] epoch  3/25  loss 154.2882
+[     ae_32] epoch  4/25  loss 105.2747
+[     ae_32] epoch  5/25  loss 86.5003
+[     ae_32] epoch  6/25  loss 78.5709
+[     ae_32] epoch  7/25  loss 74.4612
+[     ae_32] epoch  8/25  loss 71.4258
+[     ae_32] epoch  9/25  loss 69.3180
+[     ae_32] epoch 10/25  loss 67.3437
+[     ae_32] epoch 11/25  loss 65.9264
+[     ae_32] epoch 12/25  loss 64.7376
+[     ae_32] epoch 13/25  loss 63.8330
+[     ae_32] epoch 14/25  loss 63.0214
+[     ae_32] epoch 15/25  loss 62.4012
+[     ae_32] epoch 16/25  loss 61.8780
+[     ae_32] epoch 17/25  loss 61.4393
+[     ae_32] epoch 18/25  loss 61.0496
+[     ae_32] epoch 19/25  loss 60.7433
+[     ae_32] epoch 20/25  loss 60.5004
+[     ae_32] epoch 21/25  loss 60.3100
+[     ae_32] epoch 22/25  loss 60.1433
+[     ae_32] epoch 23/25  loss 60.0343
+[     ae_32] epoch 24/25  loss 59.9626
+[     ae_32] epoch 25/25  loss 59.9291
+ae_2: mse 0.0383  recog 0.752  knn 0.726  logreg 0.683
+ae_4: mse 0.0261  recog 0.920  knn 0.918  logreg 0.895
+ae_10: mse 0.0122  recog 0.958  knn 0.958  logreg 0.930
+ae_16: mse 0.0078  recog 0.975  knn 0.970  logreg 0.933
+ae_32: mse 0.0051  recog 0.984  knn 0.974  logreg 0.942
+{
+ "run_id": "run_2026-10-14_113317",
+ "data": {
+  "train_n": 60000,
+  "test_n": 10000
+ },
+ "train_seconds": 87.0,
+ "classifier": {
+  "test_acc": {
+   "value": 0.991599977016449
+  }
+ },
+ "inversion": {
+  "C1": {
+   "mse": {
+    "value": 0.0011894326889887452
+   },
+   "recog_acc": {
+    "value": 0.990399956703186
+   },
+   "per_class_mse": {
+    "0": 0.0012872138759121299,
+    "1": 0.0005869489395990968,
+    "2": 0.0012776098446920514,
+    "3": 0.0012796255759894848,
+    "4": 0.001203356427140534,
+    "5": 0.0013256630627438426,
+    "6": 0.001310642110183835,
+    "7": 0.0009686629055067897,
+    "8": 0.0015612451825290918,
+    "9": 0.0012086561182513833
+   },
+   "per_class_recog_acc": {
+    "0": 0.9948979020118713,
+    "1": 0.999118983745575,
+    "2": 0.9903100728988647,
+    "3": 0.9930693507194519,
+    "4": 0.9928717613220215,
+    "5": 0.9910314679145813,
+    "6": 0.9843423962593079,
+    "7": 0.9892995953559875,
+    "8": 0.9825462102890015,
+    "9": 0.9851338267326355
+   },
+   "dim": 3136
+  },
+  "C2": {
+   "mse": {
+    "value": 0.0029974577482789755
+   },
+   "recog_acc": {
+    "value": 0.9881999492645264
+   },
+   "per_class_mse": {
+    "0": 0.0032609719783067703,
+    "1": 0.0011261049658060074,
+    "2": 0.0031776020769029856,
+    "3": 0.0031033374834805727,
+    "4": 0.0029628954362124205,
+    "5": 0.0033678594045341015,
+    "6": 0.0036185479257255793,
+    "7": 0.0021479185670614243,
+    "8": 0.0045933956280350685,
+    "9": 0.0029977713711559772
+   },
+   "per_class_recog_acc": {
+    "0": 0.9969387054443359,
+    "1": 0.9973568320274353,
+    "2": 0.9912790656089783,
+    "3": 0.987128734588623,
+    "4": 0.986761748790741,
+    "5": 0.9932736158370972,
+    "6": 0.9864301085472107,
+    "7": 0.9912451505661011,
+    "8": 0.9743326902389526,
+    "9": 0.9762141108512878
+   },
+   "dim": 1568
+  },
+  "F1": {
+   "mse": {
+    "value": 0.01002596691250801
+   },
+   "recog_acc": {
+    "value": 0.9769999980926514
+   },
+   "per_class_mse": {
+    "0": 0.010777286253869534,
+    "1": 0.002552632475271821,
+    "2": 0.01278818491846323,
+    "3": 0.011721542105078697,
+    "4": 0.010221371427178383,
+    "5": 0.012575548142194748,
+    "6": 0.010511585511267185,
+    "7": 0.007602413650602102,
+    "8": 0.01438111998140812,
+    "9": 0.008540308102965355
+   },
+   "per_class_recog_acc": {
+    "0": 0.9938775300979614,
+    "1": 0.9964758157730103,
+    "2": 0.9757751822471619,
+    "3": 0.9712871313095093,
+    "4": 0.9745417833328247,
+    "5": 0.9809417724609375,
+    "6": 0.9791231751441956,
+    "7": 0.9854085445404053,
+    "8": 0.9414784908294678,
+    "9": 0.9682854413986206
+   },
+   "dim": 128
+  },
+  "logits": {
+   "mse": {
+    "value": 0.02825559861958027
+   },
+   "recog_acc": {
+    "value": 0.9679999947547913
+   },
+   "per_class_mse": {
+    "0": 0.030483003705739975,
+    "1": 0.006759734358638525,
+    "2": 0.035607900470495224,
+    "3": 0.03646533936262131,
+    "4": 0.029926057904958725,
+    "5": 0.03390729799866676,
+    "6": 0.02720906212925911,
+    "7": 0.023539261892437935,
+    
+
+输出目录：results\run_2026-10-14_113317

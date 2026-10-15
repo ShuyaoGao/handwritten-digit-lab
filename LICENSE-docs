@@ -1,0 +1,33 @@
+Documentation and teaching materials license
+============================================
+
+Copyright (c) 2026 Shuyao Gao
+Contact: gaoshuyao.mk@gmail.com
+
+Unless otherwise noted, the documentation and teaching materials in this
+repository are licensed under the Creative Commons Attribution 4.0
+International License (CC BY 4.0).
+
+  Summary: https://creativecommons.org/licenses/by/4.0/
+  Full legal code: https://creativecommons.org/licenses/by/4.0/legalcode
+
+"Documentation and teaching materials" means:
+  - the prose of README.md;
+  - the text, charts and figures shown by the web demo (play/), including
+    the tutorial overlay;
+  - screenshots and figures under docs/media/.
+
+Source code (Python, JavaScript, HTML/CSS templates and build scripts) is
+licensed separately under the MIT License, see LICENSE.
+
+EXCEPTION - MNIST data. The handwritten digit images shown by the demo, and
+data derived from them that ships with this repository (sample images,
+reconstructions, 2-D codes, under play/assets/gen/ and results/), come from
+the MNIST database (c) Yann LeCun and Corinna Cortes, which is made available
+under the Creative Commons Attribution-Share Alike 3.0 license (CC BY-SA 3.0).
+That data is NOT covered by CC BY 4.0; it is redistributed under CC BY-SA 3.0.
+See THIRD_PARTY.md.
+
+Suggested attribution:
+  "Handwritten Digit Lab" by Shuyao Gao, CC BY 4.0,
+  https://github.com/ShuyaoGao/handwritten-digit-lab

@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# MNIST 原始数据：运行训练脚本时自动下载
+data/
+
+# 训练产物：权重较大、可重新生成
+*.pt
+*.pth
+
+# 发布包挂在 GitHub Release，不进仓库；浏览器验收的截图和报告在本地生成
+release/
+build/
+*.zip
+
+# 本地杂项
+.DS_Store
+*.log
+!results/**/raw/*.log

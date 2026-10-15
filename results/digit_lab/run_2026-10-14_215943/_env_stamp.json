@@ -1,0 +1,15 @@
+{
+  "run_id": "run_2026-10-14_215943",
+  "started": "2026-10-14T21:59:43",
+  "host": "dev-laptop",
+  "python": "3.12.10",
+  "torch": "2.11.0+cu128",
+  "torchvision": "0.26.0+cu128",
+  "device": "NVIDIA GeForce RTX 5090 Laptop GPU",
+  "args": {
+    "epochs": 15,
+    "bs": 256,
+    "data": "data",
+    "out": null
+  }
+}

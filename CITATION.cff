@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this software or its teaching materials, please cite it as below."
+title: "手写数字实验台 / Handwritten Digit Lab"
+abstract: "A browser-based teaching demo in two lessons. Lesson 1: draw a digit and watch three networks trained on MNIST (fully connected only, a small CNN and a standard CNN) recognise it, with a live architecture diagram, per-layer activations, an occlusion heat map and neuron knockout. Lesson 2: the same convolutional encoder, trained as an autoencoder, squeezes every digit into 2 numbers - a point on a map - and the decoder draws a digit-like 'shadow' from any point; it also compares bottleneck sizes and shows how much of the input survives in each layer of the recognition network. All networks run in pure JavaScript. Part of the AI 教学演示案例 / AI Teaching Demos series."
+type: software
+authors:
+  - family-names: "Gao"
+    given-names: "Shuyao"
+    email: "gaoshuyao.mk@gmail.com"
+    affiliation: "aSSIST University (Seoul School of Integrated Sciences and Technologies)"
+version: "1.0"
+license: MIT
+repository-code: "https://github.com/ShuyaoGao/handwritten-digit-lab"
+url: "https://shuyaogao.github.io/handwritten-digit-lab/"
+keywords:
+  - handwritten digit recognition
+  - convolutional neural network
+  - autoencoder
+  - latent space
+  - MNIST
+  - feature inversion
+  - visualization
+  - teaching demo
