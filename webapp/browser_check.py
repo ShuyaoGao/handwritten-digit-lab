@@ -46,6 +46,83 @@ def go_center(b, digit):
     time.sleep(0.8)
 
 
+def rdrag(b, pts):
+    """鼠标右键拖动（3 维地图的旋转）"""
+    x, y = pts[0]
+    b.call("Input.dispatchMouseEvent", {"type": "mouseMoved", "x": x, "y": y})
+    b.call("Input.dispatchMouseEvent", {"type": "mousePressed", "x": x, "y": y, "button": "right", "buttons": 2, "clickCount": 1})
+    for x, y in pts[1:]:
+        b.call("Input.dispatchMouseEvent", {"type": "mouseMoved", "x": x, "y": y, "button": "right", "buttons": 2})
+        time.sleep(0.01)
+    b.call("Input.dispatchMouseEvent", {"type": "mouseReleased", "x": x, "y": y, "button": "right", "buttons": 0, "clickCount": 1})
+    time.sleep(0.3)
+
+
+def touch2(b, pts):
+    """两根手指同时拖动；pts 是 [((x1, y1), (x2, y2)), ...]"""
+    tp = lambda a, c: [{"x": a[0], "y": a[1], "id": 1}, {"x": c[0], "y": c[1], "id": 2}]
+    b.call("Input.dispatchTouchEvent", {"type": "touchStart", "touchPoints": tp(*pts[0])})
+    for a, c in pts[1:]:
+        b.call("Input.dispatchTouchEvent", {"type": "touchMove", "touchPoints": tp(a, c)})
+        time.sleep(0.01)
+    b.call("Input.dispatchTouchEvent", {"type": "touchEnd", "touchPoints": []})
+    time.sleep(0.3)
+
+
+def dim_checks(b, rep, scope, shots, mobile=False):
+    """地图换成 1 维 / 3 维：按需加载；1 维拖动只改一个数；3 维右键（双指）旋转、左键（单指）选点、滚轮 / 滑块前后推"""
+    b.js("window.scrollTo(0, 0)")
+    b.click("#m-btnDim1")
+    ok = b.wait("MAP_TEST.state().loaded.dims && MAP_TEST.state().dim === 1", 15)
+    s = mp(b)
+    rep.ok(scope, "地图换成 1 维：按需加载，结构式一致，★ 跟着换成 1 个数", ok and s["formulaOk"] and len(s["z"]) == 1 and (s["star"] is None or len(s["star"]) == 1), s["z"])
+    m = b.rect("#m-mapBox")
+    y = m["y"] + m["h"] * 0.5
+    b.drag([(m["x"] + m["w"] * 0.3, y), (m["x"] + m["w"] * 0.5, y), (m["x"] + m["w"] * 0.7, y)])
+    time.sleep(0.5)
+    s2 = mp(b)
+    rep.ok(scope, "1 维地图上拖动：点只沿一条线走", s2["zSource"] == "user" and len(s2["z"]) == 1 and s2["z"] != s["z"], f"{s['z']} → {s2['z']}")
+    b.js("window.scrollTo(0, 0)")
+    b.shot(shots / f"{scope}_5b_map_1d.png")
+    b.click("#m-btnDim3")
+    ok = b.wait("MAP_TEST.state().dim === 3", 10)
+    s = mp(b)
+    rep.ok(scope, "地图换成 3 维：结构式一致，编码 3 个数，出现「前后」滑块", ok and s["formulaOk"] and len(s["z"]) == 3 and b.js("!document.getElementById('m-depthBox').hidden"), s["z"])
+    m = b.rect("#m-mapBox")
+    cx, cy = m["cx"], m["cy"]
+    if mobile:
+        touch2(b, [((cx - 40 + 8 * i, cy), (cx + 40 + 8 * i, cy)) for i in range(10)])
+    else:
+        rdrag(b, [(cx - 60 + 12 * i, cy + 4 * i) for i in range(11)])
+    s2 = mp(b)
+    rep.ok(scope, "3 维：" + ("双指拖动" if mobile else "右键拖动") + "旋转立方体，点的编码不变", abs(s2["yaw"] - s["yaw"]) > 0.2 and s2["z"] == s["z"], f"yaw {s['yaw']:.2f} → {s2['yaw']:.2f}")
+    b.drag([(cx, cy), (cx + m["w"] * 0.1, cy - m["h"] * 0.05), (cx + m["w"] * 0.2, cy - m["h"] * 0.1)])
+    time.sleep(0.4)
+    s3 = mp(b)
+    rep.ok(scope, "3 维：" + ("单指" if mobile else "左键") + "拖动选点，影子跟着变", s3["zSource"] == "user" and len(s3["z"]) == 3 and s3["z"] != s2["z"], f"{s2['z']} → {s3['z']}")
+    if mobile:
+        b.js("(function(){var i=document.getElementById('m-depth'); i.value=+i.value+0.8; i.dispatchEvent(new Event('input'));})()")
+    else:
+        b.call("Input.dispatchMouseEvent", {"type": "mouseWheel", "x": cx, "y": cy, "deltaX": 0, "deltaY": -300})
+    time.sleep(0.4)
+    s4 = mp(b)
+    rep.ok(scope, "3 维：" + ("「前后」滑块" if mobile else "滚轮") + "把点往前推", s4["z"] != s3["z"] and len(s4["z"]) == 3, f"{s3['z']} → {s4['z']}")
+    L = b.js(LAYOUT_JS)
+    rep.ok(scope, "3 维：没有横向溢出", L["sw"] <= L["iw"] + 1, L)
+    b.js("window.scrollTo(0, 0)")
+    b.shot(shots / f"{scope}_5c_map_3d.png")
+    if not mobile:
+        b.click("#m-btnGrid")
+        time.sleep(0.6)
+        b.js("window.scrollTo(0, 0)")
+        b.shot(shots / f"{scope}_5d_map_3d_grid.png")
+        b.click("#m-btnPts")
+    b.click("#m-btnDim2")
+    ok = b.wait("MAP_TEST.state().dim === 2", 5)
+    go_center(b, 0)
+    rep.ok(scope, "换回 2 维：「0」的中心仍被认作 0", ok and mp(b)["shadowPred"] == 0 and len(mp(b)["z"]) == 2, mp(b)["z"])
+
+
 def to_lesson(b, lesson):
     b.click(f'.chapters button[data-lesson="{lesson}"]')
     if lesson == "shadow":
@@ -174,6 +251,7 @@ def desktop(b, rep, scope, shots):
     k2 = mp(b)["knocked"]
     b.click("#m-btnKoReset")
     rep.ok(scope, "敲掉解码器通道 1 个；随机敲掉 25%；全部恢复", k1 == 1 and k2 > 10 and mp(b)["knocked"] == 0, f"{k1}, {k2}")
+    dim_checks(b, rep, scope, shots)
     b.click('.tabs button[data-tab="compress"]')
     rep.ok(scope, "压缩多少：按需加载 4/10/16/32 维模型", b.wait("MAP_TEST.state().loaded.compress && MAP_TEST.state().reconCards===6", 15))
     rep.ok(scope, "结构式、参数量与训练端一致（10 维）", mp(b)["formulaOk"])
@@ -236,6 +314,7 @@ def mobile(b, rep, scope, shots):
     draw_seven(b, "#m-pad")
     rep.ok(scope, "手指在小画板写 7 → 地图上出现 ★", mp(b)["star"] is not None)
     b.shot(shots / f"{scope}_4_map.png")
+    dim_checks(b, rep, scope, shots, mobile=True)
     b.click("#m-slotMap .see-brain")
     br = b.rect("#m-brain")
     rep.ok(scope, "「看大脑」全屏展开（解码器 + 结构图）", mp(b)["brainOpen"] and br["w"] >= L["iw"] - 1 and b.js("!!document.querySelector('#m-arch canvas')"), br)

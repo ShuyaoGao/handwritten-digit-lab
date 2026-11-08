@@ -30,7 +30,7 @@
 - **手机**：点在线链接 <https://shuyaogao.github.io/handwritten-digit-lab/>（iPhone、安卓的浏览器都可以，竖屏使用）。
 - **电脑**（Windows、macOS）三种方式任选：
   1. 点上面的在线链接；
-  2. 在本仓库右侧 **Releases** 里下载 `handwritten-digit-lab-v1.0.zip`（约 6.4 MB），解压后双击文件夹里的 `index.html`（或 `双击打开.html`）；
+  2. 在本仓库右侧 **Releases** 里下载 `handwritten-digit-lab-v1.0.zip`（约 8.3 MB），解压后双击文件夹里的 `index.html`（或 `双击打开.html`）；
   3. 点 **Code → Download ZIP**，解压后双击 **`play/index.html`**。
 
 不需要 Python，不需要联网：网络权重、示例图片都在 `play/assets/` 里，推理用纯 JavaScript 在浏览器里完成。第二课的模型（约 8 MB）在第一次进入第二课时才加载。
@@ -56,7 +56,7 @@
 **手机（触屏）**：竖屏使用。第一课上方是"模型看到的 28×28"和判断，下方是画板；第二课上方是地图，下方是影子和小画板。
 点"看大脑"全屏看网络结构和每一层（结构图可以左右滑，点某一层看它怎么算），"返回"回来。右上角 ☰ 里有本课的选项、操作说明、退出。
 
-已测试（Windows）：Chrome 完整验收，电脑 1920×1080 与 1366×768，手机用 DevTools 模拟 390×844、414×896、360×780 与平板 768×1024（开启触屏）；Edge 做了冒烟测试（无头 Edge 会把页面当后台页降帧，长时间的自动化验收不可靠）。184 项检查通过 184 项（`python -m webapp.browser_check`）。Safari、真实手机和前台的 Edge 窗口未自动测试，请在真机上确认。
+已测试（Windows）：Chrome 完整验收，电脑 1920×1080 与 1366×768，手机用 DevTools 模拟 390×844、414×896、360×780 与平板 768×1024（开启触屏）；Edge 做了冒烟测试（无头 Edge 会把页面当后台页降帧，长时间的自动化验收不可靠）。232 项检查通过 232 项（`python -m webapp.browser_check`）。Safari、真实手机和前台的 Edge 窗口未自动测试，请在真机上确认。
 
 ## 网络结构图怎么读
 
@@ -141,7 +141,7 @@ CPU 也能训练，只是慢很多。署名、版本号集中在 `credits.json`�
 
 ```
 play/                  网页本体（双击 index.html 即可使用）
-  assets/gen/          lab.js（第一课的三档网络）、core.js / compress.js / invert.js（第二课，按需加载）
+  assets/gen/          lab.js（第一课的三档网络）、core.js / compress.js / invert.js / dims.js（第二课，按需加载）
 webapp/                网页源码（web/：index.html、lab.js 第一课、map.js 第二课、app.css）、构建、浏览器验收
 digit_lab/             第一课的训练脚本
 digit_map/             第二课的训练与导出脚本

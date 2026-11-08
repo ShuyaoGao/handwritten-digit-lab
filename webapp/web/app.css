@@ -120,6 +120,10 @@ body[data-mode="mdemo"] .lesson-shadow #m-cardInterp {display: none; }
 .lesson-shadow .demo-badge {position: absolute; left: 8px; top: 8px; background: var(--ink); color: var(--surface); font-size: 12px; padding: 2px 8px; border-radius: 99px; pointer-events: none; }
 .lesson-shadow .map-tools {display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-top: 10px; }
 .lesson-shadow .seg {display: inline-flex; gap: 4px; }
+.lesson-shadow .seg.depth {align-items: center; gap: 6px; font-size: 13px; color: var(--ink-2); }
+.lesson-shadow .seg.depth[hidden] {display: none; }
+.lesson-shadow .seg.depth input {width: 110px; accent-color: var(--accent); }
+.lesson-shadow .map-hint {position: absolute; left: 8px; right: 8px; bottom: 6px; font-size: 12px; color: var(--ink-2); text-align: center; pointer-events: none; text-shadow: 0 0 3px var(--surface), 0 0 3px var(--surface); }
 .lesson-shadow .chips {display: flex; flex-wrap: wrap; gap: 5px; }
 .lesson-shadow .chip {border: 1px solid var(--line-strong); background: var(--surface); border-radius: 99px; padding: 1px 9px 1px 7px; font-size: 13px; font-family: var(--f-mono); display: inline-flex; align-items: center; gap: 5px; }
 .lesson-shadow .chip i {width: 9px; height: 9px; border-radius: 50%; display: inline-block; }

@@ -6,6 +6,7 @@
 分三个包，网页按模式按需加载（手机上先只下载地图要用的部分）：
   export/core.json      2 维自编码器 + 识别网络 + 1 万张测试图的 2 维编码 + 示例图
   export/compress.json  4 / 10 / 16 / 32 维自编码器
+  export/dims.json      地图的 1 维 / 3 维自编码器 + 测试图的编码（有 ae_1、ae_3 时才导出）
   export/invert.json    识别网络各层的反演解码器 + 40 张固定展示图的各方式还原结果
   export/check.json     校验样本（tests/ 用 V8 跑网页端推理，与 PyTorch 比对）
 """
@@ -20,6 +21,7 @@ from common.export import pack_weights, u8_b64
 
 ROOT = Path(__file__).resolve().parents[1]
 AE_DIMS = [2, 4, 10, 16, 32]
+MAP_DIMS = [1, 3]   # 只给地图用的 1 维 / 3 维（digit_map/train_map_dims.py 后补训练）
 
 
 def L(op, **kw):
@@ -90,6 +92,7 @@ def export(run, models, Xte, Yte, result):
     out.mkdir(exist_ok=True)
     gal = np.load(run / "raw" / "gallery.npz")
     lat = np.load(run / "raw" / "latent_ae2.npz")
+    map_dims = [d for d in MAP_DIMS if f"ae_{d}" in models]
 
     def ae_info(d):
         sd = models[f"ae_{d}"]
@@ -105,7 +108,7 @@ def export(run, models, Xte, Yte, result):
     # 各自编码器测试集编码的均值和标准差（"拧旋钮"滑块的范围）
     stats = {}
     with torch.no_grad():
-        for d in AE_DIMS:
+        for d in AE_DIMS + map_dims:
             z = encode(models[f"ae_{d}"], Xte)
             stats[str(d)] = {"mean": z.mean(0).numpy().round(4).tolist(), "std": z.std(0).numpy().round(4).tolist()}
 
@@ -121,6 +124,19 @@ def export(run, models, Xte, Yte, result):
         "latent": {"z": np.round(z2.ravel(), 3).tolist(), "y": y2.tolist(), "centers": centers},
         "gallery": {"y": gal["y"].tolist(), "test_index": gal["idx"].tolist(), "orig": u8_b64(gal["orig"] / 255)},
     }
+    dims = None
+    if map_dims:
+        lat_d = {}
+        for d in map_dims:
+            ld = np.load(run / "raw" / f"latent_ae{d}.npz")
+            assert (ld["y"] == y2).all()
+            lat_d[str(d)] = {"z": np.round(ld["z"].ravel(), 3).tolist(), "centers": [np.median(ld["z"][y2 == c], axis=0).round(4).tolist() for c in range(10)]}
+        dims = {
+            "ae": {str(d): ae_info(d) | {"stats": stats[str(d)]} for d in map_dims},
+            "result": {k: result["autoencoder_map"][k] for k in map(str, map_dims)},
+            "weights": dict(zip(["manifest", "b64"], pack_weights({f"ae_{d}": models[f"ae_{d}"] for d in map_dims}))),
+            "latent": lat_d,
+        }
     compress = {"weights": dict(zip(["manifest", "b64"], pack_weights({f"ae_{d}": models[f"ae_{d}"] for d in AE_DIMS if d != 2})))}
     inv_keys = ["C1", "C2", "F1", "logits"]
     invert = {
@@ -138,7 +154,7 @@ def export(run, models, Xte, Yte, result):
     with torch.no_grad():
         fe = clf.features(chk)
         check["classifier"] = {"logits": fe["logits"].tolist(), "C2": fe["C2"].reshape(3, -1).tolist()}
-        for d in AE_DIMS:
+        for d in AE_DIMS + map_dims:
             ae = AutoEncoder(d); ae.load_state_dict(models[f"ae_{d}"]); ae.eval()
             z = ae.encode(chk)
             h = F.relu(ae.dec.fc2(F.relu(ae.dec.fc1(z))))
@@ -148,7 +164,7 @@ def export(run, models, Xte, Yte, result):
             m.load_state_dict(models[f"inv_{k}"]); m.eval()
             check["inv"][k] = m(fe[k])[:, 0].reshape(3, -1).tolist()
 
-    for name, obj in [("core", core), ("compress", compress), ("invert", invert), ("check", check)]:
+    for name, obj in [("core", core), ("compress", compress), ("invert", invert), ("check", check)] + ([("dims", dims)] if dims else []):
         (out / f"{name}.json").write_text(json.dumps(obj, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     return out
 

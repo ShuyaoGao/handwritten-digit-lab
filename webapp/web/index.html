@@ -130,9 +130,18 @@
     <section class="left lesson-shadow">
       <div class="card m-map" id="m-cardMap">
         <div class="map-wrap">
-          <div class="map-box" id="m-mapBox"><canvas id="m-mapBase"></canvas><canvas id="m-mapTop"></canvas><div class="demo-badge" id="m-demoBadge" hidden>演示 · 点在地图上自动游走</div></div>
+          <div class="map-box" id="m-mapBox"><canvas id="m-mapBase"></canvas><canvas id="m-mapTop"></canvas><div class="demo-badge" id="m-demoBadge" hidden>演示 · 点在地图上自动游走</div><div class="map-hint" id="m-mapHint" hidden></div></div>
         </div>
         <div class="map-tools">
+          <div class="seg dims" role="group" aria-label="压缩成几个数">
+            <button class="btn" id="m-btnDim1" type="button" aria-pressed="false" title="压缩成 1 个数：一条线">1 维</button>
+            <button class="btn" id="m-btnDim2" type="button" aria-pressed="true" title="压缩成 2 个数：平面地图">2 维</button>
+            <button class="btn" id="m-btnDim3" type="button" aria-pressed="false" title="压缩成 3 个数：可以旋转的立体">3 维</button>
+          </div>
+          <div class="seg depth" id="m-depthBox" hidden>
+            <label for="m-depth">前后</label><input type="range" id="m-depth" min="-1.8" max="1.8" step="0.01" value="0">
+            <button class="btn" id="m-btnView" type="button" title="把立方体转回初始角度">复位视角</button>
+          </div>
           <div class="seg" role="group" aria-label="显示">
             <button class="btn" id="m-btnPts" type="button" aria-pressed="true">测试图分布</button>
             <button class="btn" id="m-btnGrid" type="button" aria-pressed="false">铺满影子</button>
@@ -304,7 +313,7 @@
         </div>
       </div>
       <p><b>第一课的模式</b>：演示（自动轮播测试集）、我来写、练习（4 个小任务）。<b>第二课的模式</b>：演示（点在地图上自动游走）、地图（自己拖、自己写，有练习任务）、压缩多少（2/4/10/16/32 个数，能拧编码里的数）、识别网络丢了什么（第一课的网络每一层还剩多少原图信息）。</p>
-      <p class="only-desk small">快捷键（第一课）：<kbd>C</kbd> 清除　<kbd>Z</kbd> 撤销　<kbd>E</kbd> 示例　<kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> 换网络　<kbd>空格</kbd> 暂停演示。（第二课）：<kbd>G</kbd> 铺满影子　<kbd>F</kbd> 全景 / 放大　<kbd>P</kbd> 播放渐变。通用：<kbd>H</kbd> 说明　<kbd>Esc</kbd> 关闭</p>
+      <p class="only-desk small">快捷键（第一课）：<kbd>C</kbd> 清除　<kbd>Z</kbd> 撤销　<kbd>E</kbd> 示例　<kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> 换网络　<kbd>空格</kbd> 暂停演示。（第二课）：<kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> 地图换成 1 / 2 / 3 维（右键拖动旋转 3 维）　<kbd>G</kbd> 铺满影子　<kbd>F</kbd> 全景 / 放大　<kbd>P</kbd> 播放渐变。通用：<kbd>H</kbd> 说明　<kbd>Esc</kbd> 关闭</p>
       <p class="small">"网络在看哪里"的热力图用遮挡法算：依次遮住图上一小块，看判断的把握掉多少。它说明的是相关性，不代表因果。</p>
     </div>
     <div class="sheet-foot"><button class="btn primary" id="helpStart" type="button">开始</button></div>

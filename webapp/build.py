@@ -5,7 +5,7 @@
 
 数据来自两次训练的导出结果：
   第一课 results/digit_lab/<run>/export/model_data.json → assets/gen/lab.js（打开页面时加载）
-  第二课 results/digit_map/<run>/export/*.json          → assets/gen/core.js、compress.js、invert.js（进入第二课 / 对应模式时才加载）
+  第二课 results/digit_map/<run>/export/*.json          → assets/gen/core.js、compress.js、invert.js、dims.js（进入第二课 / 对应模式时才加载）
 """
 import argparse
 import json
@@ -25,7 +25,7 @@ def main():
     data = json.loads((lab / "export" / "model_data.json").read_text(encoding="utf-8"))
     data.pop("check", None)
     gen = {"lab.js": js_assign("DIGIT_LAB_DATA", data)}
-    for n in ["core", "compress", "invert"]:
+    for n in ["core", "compress", "invert", "dims"]:
         gen[f"{n}.js"] = js_assign(f"DM_{n.upper()}", json.loads((shadow / "export" / f"{n}.json").read_text(encoding="utf-8")))
     internal = (ROOT / "tools" / "make_publish.py").exists()
     out = Path(args.out) if args.out else (ROOT / "build" / "webapp" / "play" if internal else ROOT / "play")

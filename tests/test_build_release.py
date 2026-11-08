@@ -7,7 +7,7 @@ import pytest
 
 from common.build_util import credits
 
-GEN = ["lab.js", "core.js", "compress.js", "invert.js"]
+GEN = ["lab.js", "core.js", "compress.js", "invert.js", "dims.js"]
 ASSETS = ["app.js", "lab.js", "map.js", "main.js", "app.css", "nn.js", "arch.js", "archviz.js", "pad.js", "ui.js", "base.css"]
 
 
